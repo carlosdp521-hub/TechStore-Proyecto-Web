@@ -3,9 +3,7 @@
 require_once("php/funciones.php");
 
 iniciarSesionSegura();
-
 regenerarSesion();
-
 controlarTiempoSesion();
 
 /* ==============================
@@ -30,52 +28,15 @@ if (!isset($_SESSION["carrito"])) {
 }
 
 /* ==============================
-    CATÁLOGO DE PRODUCTOS
+    OBTENER PRODUCTOS DE LA BASE DE DATOS
 ================================ */
-
-$productos = [
-
-    [
-        "id" => 1,
-        "nombre" => "Notebook Lenovo",
-        "categoria" => "Computadores",
-        "precio" => 850000,
-        "imagen" => "img/notebook.jpg"
-    ],
-
-    [
-        "id" => 2,
-        "nombre" => "Monitor Samsung 24\"",
-        "categoria" => "Monitores",
-        "precio" => 189990,
-        "imagen" => "img/monitor.jpg"
-    ],
-
-    [
-        "id" => 3,
-        "nombre" => "Mouse Logitech",
-        "categoria" => "Accesorios",
-        "precio" => 25990,
-        "imagen" => "img/mouse.jpg"
-    ],
-
-    [
-        "id" => 4,
-        "nombre" => "Teclado Mecánico Redragon",
-        "categoria" => "Accesorios",
-        "precio" => 49990,
-        "imagen" => "img/teclado.jpg"
-    ],
-
-    [
-        "id" => 5,
-        "nombre" => "Audífonos Bluetooth",
-        "categoria" => "Audio",
-        "precio" => 69990,
-        "imagen" => "img/audifonos.jpg"
-    ]
-
-];
+$productos = [];
+try {
+    $stmt = conectarDB()->query("SELECT * FROM producto ORDER BY categoria, nombre");
+    $productos = $stmt->fetchAll();
+} catch (PDOException $e) {
+    echo "Error al obtener los productos: " . $e->getMessage();
+}
 
 ?>
 <!DOCTYPE html>
@@ -108,7 +69,7 @@ $productos = [
                 <p>Categoría:<strong><?php echo $producto["categoria"]; ?></strong></p>
                 <h2>$<?php echo number_format($producto["precio"],0,",","."); ?></h2>
                 <form action="carrito.php" method="POST">
-                    <input type="hidden" name="id" value="<?php echo $producto["id"]; ?>">
+                    <input type="hidden" name="id_producto" value="<?php echo $producto["id_producto"]; ?>">
                     <input type="hidden" name="nombre" value="<?php echo htmlspecialchars($producto["nombre"]); ?>">
                     <input type="hidden" name="precio" value="<?php echo $producto["precio"]; ?>">
                     <button type="submit">Agregar al carrito</button>
