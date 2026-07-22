@@ -90,7 +90,7 @@ function controlarTiempoSesion($minutos = 15)
    LIMPIAR DATOS
 =========================== */
 
-function limpiarDato($dato)
+function limpiarDato(string $dato): string
 {
     return htmlspecialchars(trim($dato), ENT_QUOTES, "UTF-8");
 }
@@ -118,7 +118,7 @@ function validarCampos(array $campos)
    FORMATEAR PRECIO
 =========================== */
 
-function formatoPrecio($precio)
+function formatoPrecio(float $precio): string
 {
     return "$" . number_format($precio, 0, ",", ".");
 }
@@ -169,7 +169,7 @@ function cantidadProductos()
    MENSAJE DE ÉXITO
 =========================== */
 
-function mensajeExito($mensaje)
+function mensajeExito(string $mensaje)
 {
     return "<p style='color:green;font-weight:bold;'>$mensaje</p>";
 }
@@ -178,7 +178,7 @@ function mensajeExito($mensaje)
    MENSAJE DE ERROR
 =========================== */
 
-function mensajeError($mensaje)
+function mensajeError(string $mensaje)
 {
     return "<p style='color:red;font-weight:bold;'>$mensaje</p>";
 }
