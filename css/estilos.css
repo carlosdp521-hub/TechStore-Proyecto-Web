@@ -1,0 +1,431 @@
+/*====================================================
+    TECHSTORE
+    Programación Web II
+====================================================*/
+
+/************ RESET ************/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+
+    background:#eef2f7;
+
+    color:#333;
+
+    line-height:1.6;
+
+}
+
+/************ HEADER ************/
+
+header{
+
+    background:linear-gradient(90deg,#0f4c81,#1b6fb8);
+
+    color:#fff;
+
+    text-align:center;
+
+    padding:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+
+}
+
+header h1{
+
+    font-size:36px;
+
+    margin-bottom:10px;
+
+}
+
+header p{
+
+    font-size:18px;
+
+}
+
+/************ MENU ************/
+
+nav{
+
+    margin-top:20px;
+
+}
+
+nav a{
+
+    display:inline-block;
+
+    text-decoration:none;
+
+    color:white;
+
+    padding:10px 20px;
+
+    margin:5px;
+
+    border-radius:30px;
+
+    transition:.3s;
+
+    font-weight:bold;
+
+}
+
+nav a:hover{
+
+    background:white;
+
+    color:#0f4c81;
+
+}
+
+/************ CONTENIDO ************/
+
+section{
+
+    width:92%;
+
+    max-width:1200px;
+
+    margin:30px auto;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:30px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+
+}
+
+section h2{
+
+    color:#0f4c81;
+
+    margin-bottom:20px;
+
+    border-left:6px solid #0f4c81;
+
+    padding-left:15px;
+
+}
+
+/************ BUSCADOR ************/
+
+#buscar{
+
+    width:100%;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    border:2px solid #ddd;
+
+    font-size:16px;
+
+    margin-bottom:25px;
+
+}
+
+#buscar:focus{
+
+    outline:none;
+
+    border-color:#0f4c81;
+
+}
+
+/************ CATALOGO ************/
+
+.catalogo{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+    gap:25px;
+
+}
+
+/************ TARJETAS ************/
+
+.producto{
+
+    background:white;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    text-align:center;
+
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
+
+    transition:.3s;
+
+    padding:20px;
+
+}
+
+.producto:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 15px 25px rgba(0,0,0,.25);
+
+}
+
+.producto img{
+
+    width:180px;
+
+    height:180px;
+
+    object-fit:contain;
+
+    margin-bottom:15px;
+
+}
+
+.producto h3{
+
+    color:#0f4c81;
+
+    margin-bottom:10px;
+
+}
+
+.producto p{
+
+    color:#666;
+
+}
+
+.producto h2{
+
+    color:#28a745;
+
+    margin:15px 0;
+
+    border:none;
+
+    padding:0;
+
+}
+
+/************ BOTONES ************/
+
+button{
+
+    width:100%;
+
+    background:linear-gradient(90deg,#0f4c81,#2b7bc3);
+
+    color:white;
+
+    border:none;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    transform:scale(1.03);
+
+    background:linear-gradient(90deg,#1565c0,#0f4c81);
+
+}
+
+/************ FORMULARIOS ************/
+
+input,
+select{
+
+    width:100%;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    border:1px solid #ccc;
+
+    margin-top:5px;
+
+    margin-bottom:15px;
+
+}
+
+input:focus,
+select:focus{
+
+    outline:none;
+
+    border:2px solid #0f4c81;
+
+}
+
+/************ TABLAS ************/
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+th{
+
+    background:#0f4c81;
+
+    color:white;
+
+    padding:12px;
+
+}
+
+td{
+
+    padding:12px;
+
+}
+
+th,
+td{
+
+    border:1px solid #ddd;
+
+    text-align:center;
+
+}
+
+tr:nth-child(even){
+
+    background:#f8f8f8;
+
+}
+
+tr:hover{
+
+    background:#edf6ff;
+
+}
+
+/************ MENSAJES ************/
+
+.error{
+
+    background:#ffe3e3;
+
+    color:#c92a2a;
+
+    padding:15px;
+
+    border-left:6px solid red;
+
+    border-radius:6px;
+
+    margin-bottom:20px;
+
+}
+
+.exito{
+
+    background:#d3f9d8;
+
+    color:#2b8a3e;
+
+    padding:15px;
+
+    border-left:6px solid green;
+
+    border-radius:6px;
+
+    margin-bottom:20px;
+
+}
+
+/************ FOOTER ************/
+
+footer{
+
+    margin-top:40px;
+
+    background:#0f4c81;
+
+    color:white;
+
+    text-align:center;
+
+    padding:20px;
+
+}
+
+/************ RESPONSIVE ************/
+
+@media(max-width:768px){
+
+header h1{
+
+font-size:28px;
+
+}
+
+nav{
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+nav a{
+
+margin:8px;
+
+}
+
+section{
+
+padding:20px;
+
+}
+
+.producto img{
+
+width:140px;
+
+height:140px;
+
+}
+
+button{
+
+font-size:15px;
+
+}
+
+}
