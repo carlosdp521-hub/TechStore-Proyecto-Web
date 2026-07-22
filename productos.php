@@ -3,9 +3,7 @@
 require_once("php/funciones.php");
 
 iniciarSesionSegura();
-
 regenerarSesion();
-
 controlarTiempoSesion();
 
 /* ==============================
@@ -30,10 +28,22 @@ if (!isset($_SESSION["carrito"])) {
 }
 
 /* ==============================
+    OBTENER PRODUCTOS DE LA BASE DE DATOS
+================================ */
+$productos = [];
+try {
+    $stmt = conectarDB()->query("SELECT * FROM producto ORDER BY categoria, nombre");
+    $productos = $stmt->fetchAll();
+} catch (PDOException $e) {
+    echo "Error al obtener los productos: " . $e->getMessage();
+}
+
+
+/* ==============================
     CATÁLOGO DE PRODUCTOS
 ================================ */
 
-$productos = [
+/* $productos = [
 
     [
         "id" => 1,
@@ -75,7 +85,7 @@ $productos = [
         "imagen" => "img/audifonos.jpg"
     ]
 
-];
+]; */
 
 ?>
 <!DOCTYPE html>
@@ -108,7 +118,7 @@ $productos = [
                 <p>Categoría:<strong><?php echo $producto["categoria"]; ?></strong></p>
                 <h2>$<?php echo number_format($producto["precio"],0,",","."); ?></h2>
                 <form action="carrito.php" method="POST">
-                    <input type="hidden" name="id" value="<?php echo $producto["id"]; ?>">
+                    <input type="hidden" name="id_producto" value="<?php echo $producto["id_producto"]; ?>">
                     <input type="hidden" name="nombre" value="<?php echo htmlspecialchars($producto["nombre"]); ?>">
                     <input type="hidden" name="precio" value="<?php echo $producto["precio"]; ?>">
                     <button type="submit">Agregar al carrito</button>
