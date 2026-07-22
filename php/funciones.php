@@ -6,6 +6,25 @@
 =================================================== */
 
 /* ===========================
+   CONEXIÓN A LA BASE DE DATOS
+=========================== */
+
+function conectarDB()
+{
+    static $pdo = null;
+    if ($pdo === null) {
+        $pdo = new PDO(
+            "mysql:host=localhost;
+            dbname=tienda;charset=utf8", 
+            "root", 
+            "",
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,]
+        );  
+    }
+    return $pdo;
+}
+
+/* ===========================
    INICIAR SESIÓN SEGURA
 =========================== */
 
@@ -71,7 +90,7 @@ function controlarTiempoSesion($minutos = 15)
    LIMPIAR DATOS
 =========================== */
 
-function limpiarDato($dato)
+function limpiarDato(string $dato): string
 {
     return htmlspecialchars(trim($dato), ENT_QUOTES, "UTF-8");
 }
@@ -99,7 +118,7 @@ function validarCampos(array $campos)
    FORMATEAR PRECIO
 =========================== */
 
-function formatoPrecio($precio)
+function formatoPrecio(string $precio): string
 {
     return "$" . number_format($precio, 0, ",", ".");
 }
@@ -150,7 +169,7 @@ function cantidadProductos()
    MENSAJE DE ÉXITO
 =========================== */
 
-function mensajeExito($mensaje)
+function mensajeExito(string $mensaje)
 {
     return "<p style='color:green;font-weight:bold;'>$mensaje</p>";
 }
@@ -159,7 +178,7 @@ function mensajeExito($mensaje)
    MENSAJE DE ERROR
 =========================== */
 
-function mensajeError($mensaje)
+function mensajeError(string $mensaje)
 {
     return "<p style='color:red;font-weight:bold;'>$mensaje</p>";
 }
