@@ -14,8 +14,7 @@ function conectarDB()
     static $pdo = null;
     if ($pdo === null) {
         $pdo = new PDO(
-            "mysql:host=localhost;
-            dbname=tienda;charset=utf8", 
+            "mysql:host=localhost;dbname=tienda;charset=utf8", 
             "root", 
             "",
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,]

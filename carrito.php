@@ -9,17 +9,6 @@ regenerarSesion();
 controlarTiempoSesion();
 
 /* ==============================
-    VERIFICAR USUARIO
-================================ */
-
-if (!isset($_SESSION["usuario"])) {
-
-    header("Location: login.php");
-    exit();
-
-}
-
-/* ==============================
     CREAR CARRITO
 ================================ */
 
@@ -148,12 +137,18 @@ if (isset($_GET["vaciar"])) {
     <body>
         <header>
             <h1>🛒 Carrito de Compras</h1>
-            <p>Bienvenido<strong><?php echo $_SESSION["usuario"]; ?></strong></p>
+            <?php if (isset($_SESSION["usuario"])) { ?>
+            <p>Bienvenido<strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
+            <?php } ?>
             <nav>
                 <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
                 <a href="productos.php"><i class="fa-solid fa-box-open"></i>Productos</a>
                 <a href="pedido.php"><i class="fa-solid fa-shopping-cart"></i>Finalizar Compra</a>
+                <?php if (isset($_SESSION["usuario"])) { ?>
                 <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
+                <?php } else { ?>
+                <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
+                <?php } ?>
             </nav>
         </header>
         <section>
