@@ -10,28 +10,6 @@ iniciarSesionSegura();
 
 regenerarSesion();
 
-controlarTiempoSesion();
-
-/* ==============================
-   VALIDAR USUARIO
-================================ */
-
-if (!isset($_SESSION["usuario"])) {
-
-   header("Location: login.php");
-   exit();
-
-}
-
-/* ==============================
-   CREAR CARRITO
-================================ */
-
-if (!isset($_SESSION["carrito"])) {
-
-   $_SESSION["carrito"] = [];
-
-}
 
 /* ==============================
    CALCULAR CANTIDAD Y TOTAL
@@ -40,13 +18,34 @@ if (!isset($_SESSION["carrito"])) {
 $cantidadProductos = 0;
 $totalCarrito = 0;
 
-foreach ($_SESSION["carrito"] as $producto) {
+if (isset ($_SESSION["usuario"])) {
 
-   $cantidadProductos += $producto["cantidad"];
-   $totalCarrito += $producto["precio"] * $producto["cantidad"];
+   controlarTiempoSesion();
 
+   if (!isset($_SESSION["carrito"])) {
+   $_SESSION["carrito"] = [];
+   }
+
+   foreach ($_SESSION["carrito"] as $producto) {
+
+      $cantidadProductos += $producto["cantidad"];
+      $totalCarrito += $producto["precio"] * $producto["cantidad"];
+   }
 }
 
+/* ==============================
+   OBTENER PRODUCTOS DE LA BASE DE DATOS
+================================ */
+ 
+$productos = [];
+ 
+try {
+    $stmt = conectarDB()->query("SELECT * FROM producto ORDER BY categoria, nombre");
+    $productos = $stmt->fetchAll();
+} catch (PDOException $e) {
+    echo "Error al obtener los productos.";
+}
+ 
 ?>
 
 <!DOCTYPE html>
@@ -61,20 +60,28 @@ foreach ($_SESSION["carrito"] as $producto) {
    <body>
       <header>
          <h1>💻 TechStore</h1>
-         <p>Bienvenido<strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
+         <?php if (isset($_SESSION["usuario"])) { ?>
+         <p>Bienvenido <strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
+         <?php } else { ?>
+         <p>Encuentra los mejores productos tecnológicos al mejor precio.</p>
+         <?php } ?>
          <nav>
             <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
-            <a href="productos.php"><i class="fa-solid fa-laptop"></i>Productos</a>
             <a href="carrito.php"><i class="fa-solid fa-cart-shopping"></i>Carrito(<?php echo $cantidadProductos; ?>)</a>
-            <a href="cerrarSesion.php"><i class="fa-solid fa-sign-out-alt"></i>Cerrar Sesión</a>
+            <?php if (isset($_SESSION["usuario"])) { ?>
+            <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
+            <?php } else { ?>
+            <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
+            <?php } ?>
          </nav>
       </header>
-      <section>
-         <h2>Bienvenido a TechStore</h2>
-         <p>Encuentra los mejores productos tecnológicos al mejor precio.</p>
-         <br>
-         <a href="productos.php"><button>Ver Catálogo</button></a>
+      <section class="banner" style="background:linear-gradient(rgba(115, 116, 117, 0.75),rgba(111, 176, 226, 0.75)),url('img/notebook.jpg') center/cover no-repeat;color:#fff;text-align:center;padding:80px 20px;border-radius:8px;">
+         <h2 style="font-size:2rem;margin-bottom:10px;">🔥 Ofertas Tecnológicas TechStore</h2>
+         <p style="font-size:1.1rem;margin-bottom:25px;">Notebooks, monitores y accesorios con hasta 20% de descuento por tiempo limitado.</p>
+         <a href="productos.php"><button>Ver Catálogo</button></a>     
       </section>
+ 
+      <?php if (isset($_SESSION["usuario"])) { ?>
       <section>
          <h2>Resumen del Carrito</h2>
          <?php
@@ -100,6 +107,7 @@ foreach ($_SESSION["carrito"] as $producto) {
          }
          ?>
       </section>
+      <?php } ?>
       <section>
          <h2>¿Por qué comprar en TechStore?</h2>
          <ul>

@@ -20,17 +20,6 @@ if (isset($_SESSION["usuario"])) {
 $error = "";
 
 /* ==============================
-    USUARIOS DE PRUEBA
-================================ */
-
-$usuarios = [
-
-    "admin" => "1234",
-    "carlos" => "5678"
-
-];
-
-/* ==============================
     VALIDAR LOGIN
 ================================ */
 
@@ -43,26 +32,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $error = "Debe ingresar usuario y contraseña.";
 
-    } elseif (isset($usuarios[$usuario]) && $usuarios[$usuario] === $password) {
-
-        session_regenerate_id(true);
-
-        $_SESSION["usuario"] = htmlspecialchars($usuario, ENT_QUOTES, "UTF-8");
-
-        $_SESSION["ultimoAcceso"] = time();
-
-        $_SESSION["carrito"] = [];
-
-        header("Location: index.php");
-
-        exit();
-
     } else {
+        try{
+            $stmt = conectarDB()->prepare("SELECT id_cliente, usuario, password FROM cliente WHERE usuario = ?");
+            $stmt->execute([$usuario]);
+            $fila = $stmt->fetch();
+            if ($fila && password_verify($password, $fila["password"])) {
+                session_regenerate_id(true); // Regenerar ID de sesión para mayor seguridad
+                $_SESSION["usuario"] = htmlspecialchars($fila["usuario"], ENT_QUOTES, "UTF-8");
+                $_SESSION["cliente_id"] = $fila["id_cliente"];
+                $_SESSION["ultimo_acceso"] = time(); // Guardar el tiempo del último acceso
+                $_SESSION["carrito"] = []; // Inicializar el carrito de compras
 
-        $error = "Usuario o contraseña incorrectos.";
+                header("Location: index.php");
+                exit();
 
+            } else {
+
+                $error = "Usuario o contraseña incorrectos.";
+
+            }
+
+        } catch (PDOException $e) {
+
+            $error = "Error al intentar iniciar sesión.";
+
+        }
     }
-
 }
 
 ?>
@@ -100,10 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button type="submit">Ingresar</button>
             </form>
             <hr>
-            /* Usuarios de prueba.
-            En una aplicación real las credenciales
-            se almacenarían en una base de datos
-            utilizando contraseñas cifradas. */
+            <!-- Usuarios de prueba, solo para la demo -->
             <h3>Usuarios disponibles</h3>
             <table>
                 <tr>
@@ -112,13 +105,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                     <td>admin</td>
-                    <td>1234</td>
+                    <td>123456</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <td>carlos</td>
-                    <td>5678</td>
-                </tr>
+                    <td>345678</td>
+                </tr> -->
             </table>
+            <a href="index.php"><button>Volver al Inicio</button></a>
         </section>
         <footer>
             <hr>
