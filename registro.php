@@ -24,13 +24,13 @@ $exito = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $usuario = trim($_POST["usuario"]);
-    $password = trim($_POST["password"]);
-    $passwordConfirmar = trim($_POST["passwordConfirmar"]);
-    $nombre = trim($_POST["nombre"]);
-    $email = trim($_POST["email"]);
-    $direccion = trim($_POST["direccion"]);
-    $telefono = trim($_POST["telefono"]);
+    $usuario = trim($_POST["usuario"] ?? "");
+    $password = trim($_POST["password"] ?? "");
+    $passwordConfirmar = trim($_POST["passwordConfirmar"] ?? "");
+    $nombre = trim($_POST["nombre"] ?? "");
+    $email = trim($_POST["email"] ?? "");
+    $direccion = trim($_POST["direccion"] ?? "");
+    $telefono = trim($_POST["telefono"] ?? "");
 
     if (empty($usuario) || empty($password) || empty($passwordConfirmar) || empty($nombre) || empty($email) || empty($direccion) || empty($telefono)) {
 
@@ -110,6 +110,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <header>
             <h1>💻 TechStore</h1>
             <p>Programación Web II</p>
+            <nav>
+            <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
+            <a href="productos.php"><i class="fa-solid fa-box-open"></i>Productos</a>
+            <?php if (isset($_SESSION["usuario"])) { ?>
+            <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
+            <?php } else { ?>
+            <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
+            <?php } ?>
+         </nav>
         </header>
         <section style="max-width:450px;">
             <h2>Crear Cuenta</h2>
@@ -127,31 +136,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
             <form method="POST">
                 <label>Usuario</label>
-                <input type="text" name="usuario" required value="<?php echo isset($_POST["usuario"]) ? htmlspecialchars($_POST["usuario"]) : ""; ?>">
+                <input type="text" name="usuario" placeholder="Ej: jperez" required value="<?php echo isset($_POST["usuario"]) ? htmlspecialchars($_POST["usuario"]) : ""; ?>">
                 <br><br>
 
                 <label>Nombre Completo</label>
-                <input type="text" name="nombre" required value="<?php echo isset($_POST["nombre"]) ? htmlspecialchars($_POST["nombre"]) : ""; ?>">
+                <input type="text" name="nombre" placeholder="Ej: Juan Pérez" required value="<?php echo isset($_POST["nombre"]) ? htmlspecialchars($_POST["nombre"]) : ""; ?>">
                 <br><br>
 
                 <label>Correo Electrónico</label>
-                <input type="email" name="email" required value="<?php echo isset($_POST["email"]) ? htmlspecialchars($_POST["email"]) : ""; ?>">
+                <input type="email" name="email" placeholder="ejemplo@correo.com" required value="<?php echo isset($_POST["email"]) ? htmlspecialchars($_POST["email"]) : ""; ?>">
                 <br><br>
 
                 <label>Dirección</label>
-                <input type="text" name="direccion" required value="<?php echo isset($_POST["direccion"]) ? htmlspecialchars($_POST["direccion"]) : ""; ?>">
+                <input type="text" name="direccion" placeholder="Calle, número, comuna" required value="<?php echo isset($_POST["direccion"]) ? htmlspecialchars($_POST["direccion"]) : ""; ?>">
                 <br><br>
 
                 <label>Teléfono</label>
-                <input type="text" name="telefono" required value="<?php echo isset($_POST["telefono"]) ? htmlspecialchars($_POST["telefono"]) : ""; ?>">
+                <input type="text" name="telefono" placeholder="+56 9 1234 5678" required value="<?php echo isset($_POST["telefono"]) ? htmlspecialchars($_POST["telefono"]) : ""; ?>">
                 <br><br>
 
                 <label>Contraseña</label>
-                <input type="password" name="password" required minlength="6">
+                <input type="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
                 <br><br>
 
                 <label>Confirmar Contraseña</label>
-                <input type="password" name="passwordConfirmar" required minlength="6">
+                <input type="password" name="passwordConfirmar" placeholder="Repite tu contraseña" required minlength="6">
                 <br><br>
 
                 <button type="submit">Crear Cuenta</button>

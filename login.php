@@ -25,8 +25,8 @@ $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $usuario = trim($_POST["usuario"]);
-    $password = trim($_POST["password"]);
+    $usuario = trim($_POST["usuario"] ?? "");
+    $password = trim($_POST["password"] ?? "");
 
     if (empty($usuario) || empty($password)) {
 
@@ -41,8 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 session_regenerate_id(true); // Regenerar ID de sesión para mayor seguridad
                 $_SESSION["usuario"] = htmlspecialchars($fila["usuario"], ENT_QUOTES, "UTF-8");
                 $_SESSION["cliente_id"] = $fila["id_cliente"];
-                $_SESSION["ultimo_acceso"] = time(); // Guardar el tiempo del último acceso
-                $_SESSION["carrito"] = []; // Inicializar el carrito de compras
+                
+                if (!isset($_SESSION["carrito"])) {
+                    $_SESSION["carrito"] = [];
+                }
 
                 header("Location: index.php");
                 exit();
@@ -88,10 +90,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
             <form method="POST">
                 <label>Usuario</label>
-                <input type="text" name="usuario" required>
+                <input type="text" name="usuario" placeholder="Ingresa tu usuario" required>
                 <br><br>
                 <label>Contraseña</label>
-                <input type="password" name="password" required>
+                <input type="password" name="password" placeholder="Ingresa tu contraseña" required>
                 <br><br>
                 <button type="submit">Ingresar</button>
             </form>

@@ -6,7 +6,14 @@ iniciarSesionSegura();
 
 regenerarSesion();
 
-controlarTiempoSesion();
+/* ==============================
+    CONTROL DE INACTIVIDAD
+================================ */
+
+if (isset ($_SESSION["usuario"])) {
+
+   controlarTiempoSesion();
+}
 
 if($_SERVER["REQUEST_METHOD"]!="POST"){
 
@@ -24,10 +31,10 @@ if (!isset($_SESSION["carrito"]) || count($_SESSION["carrito"]) == 0) {
 
 }
 
-$nombre = htmlspecialchars(trim($_POST["nombre"]), ENT_QUOTES, "UTF-8");
-$correo = htmlspecialchars(trim($_POST["correo"]), ENT_QUOTES, "UTF-8");
-$direccion = htmlspecialchars(trim($_POST["direccion"]), ENT_QUOTES, "UTF-8");
-$pago = htmlspecialchars(trim($_POST["pago"]), ENT_QUOTES, "UTF-8");
+$nombre = htmlspecialchars(trim($_POST["nombre"] ?? ""), ENT_QUOTES, "UTF-8");
+$correo = htmlspecialchars(trim($_POST["correo"] ?? ""), ENT_QUOTES, "UTF-8");
+$direccion = htmlspecialchars(trim($_POST["direccion"] ?? ""), ENT_QUOTES, "UTF-8");
+$pago = htmlspecialchars(trim($_POST["pago"] ?? ""), ENT_QUOTES, "UTF-8");
 
 if (empty($nombre) || empty($correo) || empty($direccion) || empty($pago)) {
 
@@ -120,7 +127,6 @@ try {
             </table>
             <br>
             <h2 style="color:green;">✔ Compra realizada correctamente.</h2>
-            <a href="index.php"><button>Volver al Inicio</button></a>
             <a href="index.php"><button>Volver al Inicio</button></a>
             <a href="productos.php"><button>Seguir Comprando</button></a>
         </section>

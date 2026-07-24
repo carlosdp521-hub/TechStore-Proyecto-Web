@@ -6,11 +6,19 @@ iniciarSesionSegura();
 
 regenerarSesion();
 
-controlarTiempoSesion();
+/* ==============================
+    CONTROL DE INACTIVIDAD
+================================ */
+
+if (isset ($_SESSION["usuario"])) {
+
+   controlarTiempoSesion();
+}
 
 /* ==============================
     CREAR CARRITO
 ================================ */
+
 
 if (!isset($_SESSION["carrito"])) {
 
@@ -24,7 +32,22 @@ if (!isset($_SESSION["carrito"])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $id = $_POST["id"];
+    $id = (int) $_POST["id"];
+
+
+    try{
+        $stmt = conectarDB()->prepare("SELECT id_producto, nombre, precio FROM producto WHERE id_producto = ?");
+        $stmt->execute([$id]);
+        $productoDB = $stmt->fetch();
+    } catch (PDOException $e) {
+        header("Location: productos.php?error=No se pudo agregar el producto");
+        exit();
+    }
+
+    if (!$productoDB) {
+        header("Location: productos.php");
+        exit();
+    }
 
     if (isset($_SESSION["carrito"][$id])) {
 
@@ -34,9 +57,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $_SESSION["carrito"][$id] = [
 
-            "id" => $_POST["id"],
-            "nombre" => htmlspecialchars($_POST["nombre"], ENT_QUOTES, "UTF-8"),
-            "precio" => (int) $_POST["precio"],
+            "id" => $productoDB["id_producto"],
+            "nombre" => htmlspecialchars($productoDB["nombre"], ENT_QUOTES, "UTF-8"),
+            "precio" => (int) $productoDB["precio"], 
             "cantidad" => 1
 
         ];
@@ -54,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if (isset($_GET["sumar"])) {
 
-    $id = $_GET["sumar"];
+    $id = (int) $_GET["sumar"];
 
     if (isset($_SESSION["carrito"][$id])) {
 
@@ -73,7 +96,7 @@ if (isset($_GET["sumar"])) {
 
 if (isset($_GET["restar"])) {
 
-    $id = $_GET["restar"];
+    $id = (int) $_GET["restar"];
 
     if (isset($_SESSION["carrito"][$id])) {
 
@@ -98,7 +121,7 @@ if (isset($_GET["restar"])) {
 
 if (isset($_GET["eliminar"])) {
 
-    $id = $_GET["eliminar"];
+    $id = (int) $_GET["eliminar"];
 
     if (isset($_SESSION["carrito"][$id])) {
 
