@@ -8,14 +8,6 @@ regenerarSesion();
 
 controlarTiempoSesion();
 
-if(!isset($_SESSION["usuario"])){
-
-header("Location:login.php");
-
-exit();
-
-}
-
 if (!isset($_SESSION["carrito"]) || count($_SESSION["carrito"]) == 0) {
 
     header("Location: carrito.php");

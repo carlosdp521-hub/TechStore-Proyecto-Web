@@ -37,12 +37,40 @@ if (empty($nombre) || empty($correo) || empty($direccion) || empty($pago)) {
 
 }
 
+$clienteId = $_SESSION["cliente_id"] ?? null; // null = compra como invitado
+
 $total = 0;
 
 foreach($_SESSION["carrito"] as $producto){
+    $total += $producto["precio"] * $producto["cantidad"];
+}
 
-$total += $producto["precio"] * $producto["cantidad"];
+// Guardar cada producto del carrito como una fila en la tabla compra
+try {
+    $pdo = conectarDB();
 
+    $stmt = $pdo->prepare(
+        "INSERT INTO compra (id_cliente, id_producto, cantidad, total, fecha_compra, metodo_pago)
+         VALUES (?, ?, ?, ?, NOW(), ?)"
+    );
+
+    foreach ($_SESSION["carrito"] as $producto) {
+        $subtotal = $producto["precio"] * $producto["cantidad"];
+
+        $stmt->execute([
+            $clienteId,
+            $producto["id"],
+            $producto["cantidad"],
+            $subtotal,
+            $pago
+        ]);
+    }
+
+    $pedidoId = $pdo->lastInsertId();
+
+} catch (PDOException $e) {
+    header("Location: pedido.php?error=Ocurrió un error al procesar la compra");
+    exit();
 }
 
 ?>
@@ -59,7 +87,7 @@ $total += $producto["precio"] * $producto["cantidad"];
         </header>
         <section>
             <h2>Resumen del Pedido</h2>
-            <p><strong>N° Pedido:</strong> <?php echo rand(10000,99999); ?></p>
+            <p><strong>N° Pedido:</strong> <?php echo $pedidoId; ?></p>
             <p><strong>Cliente:</strong> <?php echo $nombre; ?></p>
             <p><strong>Correo:</strong> <?php echo $correo; ?></p>
             <p><strong>Dirección:</strong> <?php echo $direccion; ?></p>
@@ -92,6 +120,9 @@ $total += $producto["precio"] * $producto["cantidad"];
             </table>
             <br>
             <h2 style="color:green;">✔ Compra realizada correctamente.</h2>
+            <a href="index.php"><button>Volver al Inicio</button></a>
+            <a href="index.php"><button>Volver al Inicio</button></a>
+            <a href="productos.php"><button>Seguir Comprando</button></a>
         </section>
     </body>
 </html>

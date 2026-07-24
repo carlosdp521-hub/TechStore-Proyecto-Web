@@ -3,39 +3,41 @@
 require_once("php/funciones.php");
 
 iniciarSesionSegura();
+
 regenerarSesion();
-controlarTiempoSesion();
 
 /* ==============================
-    VERIFICAR USUARIO
+    CALCULAR CANTIDAD DE CARRITO
+    (solo si hay sesión iniciada)
 ================================ */
 
-if (!isset($_SESSION["usuario"])) {
+$cantidadProductos = 0;
 
-    header("Location: login.php");
-    exit();
+if (isset($_SESSION["usuario"])) {
+
+    controlarTiempoSesion();
+
+    if (!isset($_SESSION["carrito"])) {
+        $_SESSION["carrito"] = [];
+    }
+
+    foreach ($_SESSION["carrito"] as $producto) {
+        $cantidadProductos += $producto["cantidad"];
+    }
 
 }
 
-/* ==============================
-    CREAR CARRITO
-================================ */
-
-if (!isset($_SESSION["carrito"])) {
-
-    $_SESSION["carrito"] = [];
-
-}
-
-/* ==============================
+/* =======================================
     OBTENER PRODUCTOS DE LA BASE DE DATOS
-================================ */
+========================================= */
+
 $productos = [];
+
 try {
     $stmt = conectarDB()->query("SELECT * FROM producto ORDER BY categoria, nombre");
     $productos = $stmt->fetchAll();
 } catch (PDOException $e) {
-    echo "Error al obtener los productos: " . $e->getMessage();
+    echo "Error al obtener los productos.";
 }
 
 ?>
@@ -51,12 +53,19 @@ try {
     <body>
         <header>
             <h1>💻 TechStore</h1>
+            <?php if (isset($_SESSION["usuario"])) { ?>
             <p>Bienvenido<strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
+            <?php } else { ?>
+            <p>Encuentra los mejores productos tecnológicos al mejor precio.</p>
+            <?php } ?>
             <nav>
                 <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
-                <a href="productos.php"><i class="fa-solid fa-laptop"></i>Productos</a>
-                <a href="carrito.php"><i class="fa-solid fa-shopping-cart"></i>Carrito(<?php echo count($_SESSION["carrito"]); ?>)</a>
+                <a href="carrito.php"><i class="fa-solid fa-shopping-cart"></i>Carrito(<?php echo $cantidadProductos; ?>)</a>
+                <?php if (isset($_SESSION["usuario"])) { ?>
                 <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
+                <?php } else { ?>
+                <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
+                <?php } ?>
             </nav>
         </header>
         <section>
@@ -69,7 +78,7 @@ try {
                 <p>Categoría:<strong><?php echo $producto["categoria"]; ?></strong></p>
                 <h2>$<?php echo number_format($producto["precio"],0,",","."); ?></h2>
                 <form action="carrito.php" method="POST">
-                    <input type="hidden" name="id_producto" value="<?php echo $producto["id_producto"]; ?>">
+                    <input type="hidden" name="id" value="<?php echo $producto["id_producto"]; ?>">
                     <input type="hidden" name="nombre" value="<?php echo htmlspecialchars($producto["nombre"]); ?>">
                     <input type="hidden" name="precio" value="<?php echo $producto["precio"]; ?>">
                     <button type="submit">Agregar al carrito</button>
