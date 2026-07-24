@@ -54,7 +54,7 @@ try {
         <header>
             <h1>💻 TechStore</h1>
             <?php if (isset($_SESSION["usuario"])) { ?>
-            <p>Bienvenido<strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
+            <p>Bienvenido <strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
             <?php } else { ?>
             <p>Encuentra los mejores productos tecnológicos al mejor precio.</p>
             <?php } ?>
