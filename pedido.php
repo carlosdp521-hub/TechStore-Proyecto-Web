@@ -6,14 +6,7 @@ iniciarSesionSegura();
 
 regenerarSesion();
 
-/* ==============================
-    CONTROL DE INACTIVIDAD
-================================ */
-
-if (isset ($_SESSION["usuario"])) {
-
-   controlarTiempoSesion();
-}
+controlarTiempoSesion();
 
 if (!isset($_SESSION["carrito"]) || count($_SESSION["carrito"]) == 0) {
 
@@ -53,13 +46,13 @@ if (!isset($_SESSION["carrito"]) || count($_SESSION["carrito"]) == 0) {
             ?>
             <form action="procesarPedido.php" method="POST">
                 <label>Nombre Completo</label>
-                <input type="text" name="nombre" placeholder="Ej: Juan Pérez" required>
+                <input type="text" name="nombre" required>
                 <br><br>
                 <label>Correo Electrónico</label>
-                <input type="email" name="correo" placeholder="ejemplo@correo.com" required>
+                <input type="email" name="correo" required>
                 <br><br>
                 <label>Dirección</label>
-                <input type="text" name="direccion" placeholder="Calle, número, comuna" required>
+                <input type="text" name="direccion" required>
                 <br><br>
                 <label>Forma de Pago</label>
                 <select name="pago">

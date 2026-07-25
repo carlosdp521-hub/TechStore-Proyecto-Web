@@ -45,52 +45,70 @@ try {
 <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport"content="width=device-width, initial-scale=1.0">
         <title>Productos | TechStore</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-        <link rel="stylesheet" href="css/estilos.css">
+        <link rel="stylesheet"href="css/estilos.css">
+        <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     </head>
     <body>
-        <header>
-            <h1>💻 TechStore</h1>
-            <?php if (isset($_SESSION["usuario"])) { ?>
-            <p>Bienvenido <strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
-            <?php } else { ?>
-            <p>Encuentra los mejores productos tecnológicos al mejor precio.</p>
-            <?php } ?>
+        <header class="header">
+            <div class="logo">
+                <h1>💻 TechStore</h1>
+                <p>Catálogo de Productos</p>
+            </div>
             <nav>
-                <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
-                <a href="carrito.php"><i class="fa-solid fa-shopping-cart"></i>Carrito(<?php echo $cantidadProductos; ?>)</a>
-                <?php if (isset($_SESSION["usuario"])) { ?>
-                <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
-                <?php } else { ?>
+                <a href="index.php">Inicio</a>
+                <a href="carrito.php"><i class="fa-solid fa-cart-shopping"></i>Carrito</a>
                 <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
-                <?php } ?>
             </nav>
         </header>
-        <section>
-            <h2>Catálogo de Productos</h2>
-            <input type="text" id="buscar" placeholder="Buscar productos...">
-            <div class="catalogo"><?php foreach($productos as $producto){ ?>
-            <div class="producto">
-                <img src="<?php echo $producto["imagen"]; ?>" alt="<?php echo $producto["nombre"]; ?>">
-                <h3><?php echo $producto["nombre"]; ?></h3>
-                <p>Categoría:<strong><?php echo $producto["categoria"]; ?></strong></p>
-                <h2>$<?php echo number_format($producto["precio"],0,",","."); ?></h2>
-                <form action="carrito.php" method="POST">
-                    <input type="hidden" name="id" value="<?php echo $producto["id_producto"]; ?>">
-                    <input type="hidden" name="nombre" value="<?php echo htmlspecialchars($producto["nombre"]); ?>">
-                    <input type="hidden" name="precio" value="<?php echo $producto["precio"]; ?>">
-                    <button type="submit">Agregar al carrito</button>
-                </form>
+        <section class="catalogo">
+            <h2>Nuestros Productos</h2>
+            <div class="barra-busqueda">
+                <input type="text"id="buscar"placeholder="Buscar producto...">
+                <select id="categoria">
+                    <option value="">Todas las categorías</option>
+                    <option value="Tecnología">Tecnología</option>
+                    <option value="Oficina">Oficina</option>
+                </select>
             </div>
-            <?php } ?>
+            <div class="productos-grid" id="contenedorProductos">
+                <?php foreach($productos as $producto): ?>
+                <div class="producto"data-nombre="<?= strtolower($producto["nombre"]) ?>"data-categoria="<?= $producto["categoria"] ?>">
+                    <img src="<?= htmlspecialchars($producto["imagen"]) ?>"alt="<?= htmlspecialchars($producto["nombre"]) ?>">
+                    <div class="contenido-producto">
+                        <h3><?= htmlspecialchars($producto["nombre"]) ?></h3>
+                        <p class="categoria"><?= htmlspecialchars($producto["categoria"]) ?></p>
+                        <p class="descripcion"><?= htmlspecialchars($producto["descripcion"]) ?></p>
+                        <div class="precio"><?= formatoPrecio($producto["precio"]) ?></div>
+                        <div class="stock">Stock:<strong><?= $producto["stock"] ?></strong></div>
+                        <form action="carrito.php"method="POST">
+                            <input type="hidden"name="id_producto" value="<?= $producto["id_producto"] ?>">
+                            <input type="hidden" name="nombre" value="<?= $producto["nombre"] ?>">
+                            <input type="hidden" name="precio" value="<?= $producto["precio"] ?>">
+                            <input type="hidden" name="cantidad" value="1">
+                            <button><i class="fa-solid fa-cart-plus"></i>Agregar al carrito</button>
+                        </form>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
         </section>
-        <footer>
-        <hr>
-        <p>© 2026 TechStore Programación Web II</p>
-        </footer>
-        <script src="js/app.js"></script>
+        <script>
+        const buscar=document.getElementById("buscar");
+        const categoria=document.getElementById("categoria");
+        const productos=document.querySelectorAll(".producto");
+        function filtrar(){
+            const texto=buscar.value.toLowerCase();
+            productos.forEach(producto=>{
+                const nombre=producto.dataset.nombre;
+                const cat=producto.dataset.categoria;
+                const visible=nombre.includes(texto)&&(categoria.value===""||categoria.value===cat);
+                producto.style.display=visible?"block":"none";
+            });
+        }
+        buscar.addEventListener("keyup",filtrar);
+        categoria.addEventListener("change",filtrar);
+        </script>
     </body>
 </html>

@@ -6,19 +6,11 @@ iniciarSesionSegura();
 
 regenerarSesion();
 
-/* ==============================
-    CONTROL DE INACTIVIDAD
-================================ */
-
-if (isset ($_SESSION["usuario"])) {
-
-   controlarTiempoSesion();
-}
+controlarTiempoSesion();
 
 /* ==============================
     CREAR CARRITO
 ================================ */
-
 
 if (!isset($_SESSION["carrito"])) {
 
@@ -32,43 +24,62 @@ if (!isset($_SESSION["carrito"])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $id = (int) $_POST["id"];
+    $idProducto = filter_input(INPUT_POST, "id_producto", FILTER_VALIDATE_INT);
 
-
-    try{
-        $stmt = conectarDB()->prepare("SELECT id_producto, nombre, precio FROM producto WHERE id_producto = ?");
-        $stmt->execute([$id]);
-        $productoDB = $stmt->fetch();
-    } catch (PDOException $e) {
-        header("Location: productos.php?error=No se pudo agregar el producto");
-        exit();
-    }
-
-    if (!$productoDB) {
+    if (!$idProducto) {
         header("Location: productos.php");
         exit();
     }
 
-    if (isset($_SESSION["carrito"][$id])) {
+    try {
 
-        $_SESSION["carrito"][$id]["cantidad"]++;
+        $pdo = conectarDB();
 
-    } else {
+        $stmt = $pdo->prepare("
+            SELECT id_producto, nombre, precio, stock
+            FROM producto
+            WHERE id_producto = ?
+        ");
 
-        $_SESSION["carrito"][$id] = [
+        $stmt->execute([$idProducto]);
 
-            "id" => $productoDB["id_producto"],
-            "nombre" => htmlspecialchars($productoDB["nombre"], ENT_QUOTES, "UTF-8"),
-            "precio" => (int) $productoDB["precio"], 
-            "cantidad" => 1
+        $producto = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        ];
+        if (!$producto) {
+            header("Location: productos.php");
+            exit();
+        }
+
+        if ($producto["stock"] <= 0) {
+            header("Location: productos.php");
+            exit();
+        }
+
+        if (isset($_SESSION["carrito"][$idProducto])) {
+
+            $_SESSION["carrito"][$idProducto]["cantidad"]++;
+
+        } else {
+
+            $_SESSION["carrito"][$idProducto] = [
+
+                "id" => $producto["id_producto"],
+                "nombre" => $producto["nombre"],
+                "precio" => $producto["precio"],
+                "cantidad" => 1
+
+            ];
+
+        }
+
+    } catch (PDOException $e) {
+
+        die("Error al agregar producto.");
 
     }
 
     header("Location: carrito.php");
     exit();
-
 }
 
 /* ==============================
@@ -77,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if (isset($_GET["sumar"])) {
 
-    $id = (int) $_GET["sumar"];
+    $id = $_GET["sumar"];
 
     if (isset($_SESSION["carrito"][$id])) {
 
@@ -96,7 +107,7 @@ if (isset($_GET["sumar"])) {
 
 if (isset($_GET["restar"])) {
 
-    $id = (int) $_GET["restar"];
+    $id = $_GET["restar"];
 
     if (isset($_SESSION["carrito"][$id])) {
 
@@ -121,7 +132,7 @@ if (isset($_GET["restar"])) {
 
 if (isset($_GET["eliminar"])) {
 
-    $id = (int) $_GET["eliminar"];
+    $id = $_GET["eliminar"];
 
     if (isset($_SESSION["carrito"][$id])) {
 
@@ -147,89 +158,75 @@ if (isset($_GET["vaciar"])) {
 
 }
 
+$total = 0;
+
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Carrito de Compras</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <title>Carrito | TechStore</title>
         <link rel="stylesheet" href="css/estilos.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     </head>
     <body>
-        <header>
-            <h1>🛒 Carrito de Compras</h1>
-            <?php if (isset($_SESSION["usuario"])) { ?>
-            <p>Bienvenido<strong><?php echo htmlspecialchars($_SESSION["usuario"]); ?></strong></p>
-            <?php } ?>
+        <header class="header">
+            <div class="logo">
+                <h1>🛒 TechStore</h1>
+                <p>Carrito de Compras</p>
+            </div>
             <nav>
-                <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
-                <a href="productos.php"><i class="fa-solid fa-box-open"></i>Productos</a>
-                <a href="pedido.php"><i class="fa-solid fa-shopping-cart"></i>Finalizar Compra</a>
-                <?php if (isset($_SESSION["usuario"])) { ?>
-                <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
-                <?php } else { ?>
-                <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
-                <?php } ?>
+                <a href="index.php">Inicio</a>
+                <a href="productos.php">Productos</a>
+                <a href="miCuenta.php">Mi Cuenta</a>
             </nav>
         </header>
-        <section>
-            <h2>Productos Seleccionados</h2>
-            <?php
-            if (count($_SESSION["carrito"]) == 0) {
-                echo "<p><strong>El carrito está vacío.</strong></p>";
-                } else {
+        <section class="carrito">
+            <h2>Mi Carrito</h2>
+            <?php if(empty($_SESSION["carrito"])): ?>
+            <div class="carrito-vacio">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <h3>Tu carrito está vacío</h3>
+                <p>Agrega productos para comenzar tu compra.</p>
+                <a href="productos.php"><button>Ver Productos</button></a>
+            </div>
+            <?php else: ?>
+            <?php foreach($_SESSION["carrito"] as $item):
+            $subtotal = $item["precio"] * $item["cantidad"];
+            $total += $subtotal;
             ?>
-            <table>
-                <tr>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                    <th>Acción</th>
-                </tr>
-                <?php
-                $total = 0;
-                foreach ($_SESSION["carrito"] as $producto) {
-                    $subtotal = $producto["precio"] * $producto["cantidad"];
-                    $total += $subtotal;
-                ?>
-                <tr>
-                    <td><?php echo $producto["nombre"]; ?></td>
-                    <td>$<?php echo number_format($producto["precio"],0,",","."); ?></td>
-                    <td>
-                        <a href="carrito.php?restar=<?php echo $producto["id"]; ?>"><button>-</button></a>
-                        <strong><?php echo $producto["cantidad"]; ?></strong>
-                        <a href="carrito.php?sumar=<?php echo $producto["id"]; ?>"><button>+</button></a>
-                    </td>
-                    <td>
-                        $<?php echo number_format($subtotal,0,",","."); ?>
-                    </td>
-                    <td>
-                        <a href="carrito.php?eliminar=<?php echo $producto["id"]; ?>"><button>Eliminar</button></a>
-                    </td>
-                </tr>
-                <?php
-                }
-                ?>
-                <tr>
-                    <th colspan="3">TOTAL</th>
-                    <th>$<?php echo number_format($total,0,",","."); ?></th>
-                    <th></th>
-                </tr>
-            </table>
-            <br>
-            <a href="productos.php"><button>Seguir Comprando</button></a>
-            <a href="carrito.php?vaciar=1"><button>Vaciar Carrito</button></a>
-            <a href="pedido.php"><button>Finalizar Compra</button></a>
-            <?php
-            }
-            ?>
+            <div class="item-carrito">
+                <div class="detalle">
+                    <h3><?= htmlspecialchars($item["nombre"]) ?></h3>
+                    <p>Precio unitario</p>
+                    <strong><?= formatoPrecio($item["precio"]) ?></strong>
+                </div>
+                <div class="cantidad">
+                    <a class="btn-cantidad" href="carrito.php?restar=<?= $item["id"] ?>"> - </a>
+                    <span><?= $item["cantidad"] ?></span>
+                    <a class="btn-cantidad" href="carrito.php?sumar=<?= $item["id"] ?>"> + </a>
+                </div>
+                <div class="subtotal"><?= formatoPrecio($subtotal) ?></div>
+                <div>
+                    <a class="eliminar" href="carrito.php?eliminar=<?= $item["id"] ?>">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+            <?php endforeach; ?>
+            <div class="resumen">
+                <h2>Resumen del Pedido</h2>
+                <p>Productos:<strong><?= count($_SESSION["carrito"]) ?></strong></p>
+                <h3><?= formatoPrecio($total) ?></h3>
+                <a href="pedido.php"><button>Finalizar Compra</button></a>
+                <br><br>
+                <a href="carrito.php?vaciar=1">
+                    <button style="background:#dc3545">Vaciar Carrito</button>
+                </a>
+            </div>
+            <?php endif; ?>
         </section>
-        <footer>
-            <hr>
-            <p>© 2026 TechStore Programación Web II</p>
-        </footer>
     </body>
 </html>

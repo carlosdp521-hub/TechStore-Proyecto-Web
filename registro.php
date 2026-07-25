@@ -24,13 +24,13 @@ $exito = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $usuario = trim($_POST["usuario"] ?? "");
-    $password = trim($_POST["password"] ?? "");
-    $passwordConfirmar = trim($_POST["passwordConfirmar"] ?? "");
-    $nombre = trim($_POST["nombre"] ?? "");
-    $email = trim($_POST["email"] ?? "");
-    $direccion = trim($_POST["direccion"] ?? "");
-    $telefono = trim($_POST["telefono"] ?? "");
+    $usuario = trim($_POST["usuario"]);
+    $password = trim($_POST["password"]);
+    $passwordConfirmar = trim($_POST["passwordConfirmar"]);
+    $nombre = trim($_POST["nombre"]);
+    $email = trim($_POST["email"]);
+    $direccion = trim($_POST["direccion"]);
+    $telefono = trim($_POST["telefono"]);
 
     if (empty($usuario) || empty($password) || empty($passwordConfirmar) || empty($nombre) || empty($email) || empty($direccion) || empty($telefono)) {
 
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $stmt = $pdo->prepare(
                     "INSERT INTO cliente (usuario, password, nombre, email, direccion, telefono, fecha_registro)
-                     VALUES (?, ?, ?, ?, ?, ?, NOW())"
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())"
                 );
 
                 $stmt->execute([
@@ -101,76 +101,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Crear Cuenta | TechStore</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-        <link rel="stylesheet" href="css/estilos.css">
+        <title>Registro</title>
+        <link rel="stylesheet"href="css/estilos.css">
+        <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     </head>
     <body>
-        <header>
-            <h1>💻 TechStore</h1>
-            <p>Programación Web II</p>
-            <nav>
-            <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
-            <a href="productos.php"><i class="fa-solid fa-box-open"></i>Productos</a>
-            <?php if (isset($_SESSION["usuario"])) { ?>
-            <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
-            <?php } else { ?>
-            <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
-            <?php } ?>
-         </nav>
-        </header>
-        <section style="max-width:450px;">
-            <h2>Crear Cuenta</h2>
-            <?php
-            if ($error != "") {
-            ?>
-            <p style="color:red;font-weight:bold;"><?php echo $error; ?></p>
-            <?php
-            }
-            if ($exito != "") {
-            ?>
-            <p style="color:green;font-weight:bold;"><?php echo $exito; ?></p>
-            <?php
-            }
-            ?>
-            <form method="POST">
-                <label>Usuario</label>
-                <input type="text" name="usuario" placeholder="Ej: jperez" required value="<?php echo isset($_POST["usuario"]) ? htmlspecialchars($_POST["usuario"]) : ""; ?>">
-                <br><br>
-
-                <label>Nombre Completo</label>
-                <input type="text" name="nombre" placeholder="Ej: Juan Pérez" required value="<?php echo isset($_POST["nombre"]) ? htmlspecialchars($_POST["nombre"]) : ""; ?>">
-                <br><br>
-
-                <label>Correo Electrónico</label>
-                <input type="email" name="email" placeholder="ejemplo@correo.com" required value="<?php echo isset($_POST["email"]) ? htmlspecialchars($_POST["email"]) : ""; ?>">
-                <br><br>
-
-                <label>Dirección</label>
-                <input type="text" name="direccion" placeholder="Calle, número, comuna" required value="<?php echo isset($_POST["direccion"]) ? htmlspecialchars($_POST["direccion"]) : ""; ?>">
-                <br><br>
-
-                <label>Teléfono</label>
-                <input type="text" name="telefono" placeholder="+56 9 1234 5678" required value="<?php echo isset($_POST["telefono"]) ? htmlspecialchars($_POST["telefono"]) : ""; ?>">
-                <br><br>
-
-                <label>Contraseña</label>
-                <input type="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
-                <br><br>
-
-                <label>Confirmar Contraseña</label>
-                <input type="password" name="passwordConfirmar" placeholder="Repite tu contraseña" required minlength="6">
-                <br><br>
-
-                <button type="submit">Crear Cuenta</button>
-            </form>
-            <a href="index.php"><button>Volver al Inicio</button></a>
-            
-        </section>
-        <footer>
-            <hr>
-            <p>© 2026 TechStore</p>
-        </footer>
+        <div class="registro-container">
+            <div class="registro-left">
+                <h1>Crear Cuenta</h1>
+                <p>Únete a TechStore.</p>
+            </div>
+            <div class="registro-right">
+                <h2>Registro</h2>
+                <?php if(!empty($mensaje)): ?>
+                <div class="correcto">
+                    <?= htmlspecialchars($mensaje) ?>
+                </div>
+                <?php endif; ?>
+                <?php if(!empty($error)): ?>
+                <div class="alerta">
+                    <?= htmlspecialchars($error) ?>
+                </div>
+                <?php endif; ?>
+                <form method="POST">
+                    <input type="text" name="nombre" placeholder="Nombre completo" required>
+                    <input type="email" name="email" placeholder="Correo electrónico" required> <br>
+                    <input type="text" name="direccion" placeholder="Dirección">
+                    <input type="text" name="telefono" placeholder="Teléfono"><br>
+                    <input type="text" name="usuario" placeholder="Usuario" required>
+                    <input type="password" name="password" placeholder="Contraseña" required><br>
+                    <input type="password" name="passwordConfirmar" placeholder="Confirmar Contraseña" required>
+                    <button><i class="fa-solid fa-user-plus"></i> Crear Cuenta</button>
+                </form>
+                <br>
+                <a href="login.php"><button><i class="fa-solid fa-sign-in-alt"></i> Ya tengo una cuenta</button></a>
+            </div>
+        </div>
     </body>
 </html>
