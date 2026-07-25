@@ -181,3 +181,17 @@ function mensajeError(string $mensaje)
 {
     return "<p style='color:red;font-weight:bold;'>$mensaje</p>";
 }
+
+/* ===========================
+   VERIFICAR ACCESO DE ADMINISTRADOR
+=========================== */
+
+function verificarAdmin()
+{
+    if (!isset($_SESSION["admin_id"])) {
+
+        header("Location: loginAdmin.php");
+        exit();
+
+    }
+}
