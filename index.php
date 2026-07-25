@@ -64,13 +64,13 @@ try {
             <p>Tecnología al mejor precio</p>
          </div>
          <nav>
-            <a href="index.php"><i class="fa-solid fa-house"></i>Inicio</a>
-            <a href="productos.php"><i class="fa-solid fa-laptop"></i>Productos</a>
-            <a href="carrito.php"><i class="fa-solid fa-cart-shopping"></i>Carrito<span class="badge"><?= $cantidadProductos ?></span></a>
+            <a href="index.php">Inicio</a>
+            <a href="productos.php"><i class="fa-solid fa-list"></i>Productos</a>
+            <a href="carrito.php"><i class="fa-solid fa-cart-shopping"></i>Carrito</a>
             <?php if(isset($_SESSION["usuario"])): ?>
-            <a href="miCuenta.php"><i class="fa-solid fa-user"></i><?= htmlspecialchars($_SESSION["usuario"]) ?></a>
+            <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
             <?php else: ?>
-            <a href="login.php">Ingresar</a>
+            <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
             <?php endif; ?>
          </nav>
       </header>

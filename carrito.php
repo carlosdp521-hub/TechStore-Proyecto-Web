@@ -179,8 +179,13 @@ $total = 0;
             </div>
             <nav>
                 <a href="index.php">Inicio</a>
-                <a href="productos.php">Productos</a>
-                <a href="miCuenta.php">Mi Cuenta</a>
+                <a href="productos.php"><i class="fa-solid fa-list"></i>Productos</a>
+                <a href="carrito.php"><i class="fa-solid fa-cart-shopping"></i>Carrito</a>
+                <?php if(isset($_SESSION["usuario"])): ?>
+                <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
+                <?php else: ?>
+                <a href="login.php"><i class="fa-solid fa-right-to-bracket"></i>Mi Cuenta</a>
+                <?php endif; ?>
             </nav>
         </header>
         <section class="carrito">
@@ -222,11 +227,14 @@ $total = 0;
                 <h3><?= formatoPrecio($total) ?></h3>
                 <a href="pedido.php"><button>Finalizar Compra</button></a>
                 <br><br>
-                <a href="carrito.php?vaciar=1">
-                    <button style="background:#dc3545">Vaciar Carrito</button>
-                </a>
+                <a href="productos.php"><button style="background:#007bff">Seguir Comprando</button></a>
+                <br><br>
+                <a href="carrito.php?vaciar=1"><button style="background:#dc3545">Vaciar Carrito</button></a>
             </div>
             <?php endif; ?>
         </section>
+        <footer>
+            <p>© <?= date("Y") ?> TechStore | Programación Web II</p>
+        </footer>
     </body>
 </html>

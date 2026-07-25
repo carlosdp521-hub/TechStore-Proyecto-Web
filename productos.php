@@ -58,11 +58,16 @@ try {
             </div>
             <nav>
                 <a href="index.php">Inicio</a>
+                <a href="productos.php"><i class="fa-solid fa-list"></i>Productos</a>
                 <a href="carrito.php"><i class="fa-solid fa-cart-shopping"></i>Carrito</a>
-                <a href="miCuenta.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
+                <?php if(isset($_SESSION["usuario"])): ?>
+                    <a href="cerrarSesion.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
+                <?php else: ?>
+                    <a href="login.php"><i class="fa-solid fa-user"></i>Mi Cuenta</a>
+                <?php endif; ?>
             </nav>
         </header>
-        <section class="catalogo">
+        <section>
             <h2>Nuestros Productos</h2>
             <div class="barra-busqueda">
                 <input type="text"id="buscar"placeholder="Buscar producto...">
@@ -94,6 +99,9 @@ try {
                 <?php endforeach; ?>
             </div>
         </section>
+        <footer>
+            <p>© <?= date("Y") ?> TechStore | Programación Web II</p>
+        </footer>
         <script>
         const buscar=document.getElementById("buscar");
         const categoria=document.getElementById("categoria");
