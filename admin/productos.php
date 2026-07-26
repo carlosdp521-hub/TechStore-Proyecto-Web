@@ -4,7 +4,7 @@ require_once("../php/funciones.php");
 
 iniciarSesionSegura();
 
-verificarAdmin();
+verificarAdmin("../");
 
 $error = "";
 $exito = "";
@@ -158,9 +158,11 @@ try {
             <h1>💻 TechStore | Panel Administrador</h1>
             <p>Bienvenido <strong><?php echo $_SESSION["admin_nombre"]; ?></strong></p>
             <nav>
-                <a href="dashboard.php"><i class="fa-solid fa-chart-line"></i>Dashboard</a>
-                <a href="productos.php"><i class="fa-solid fa-box-open"></i>Productos</a>
-                <a href="../cerrarSesionAdmin.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a>
+                <a href="dashboard.php"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                <a href="productos.php"><i class="fa-solid fa-box-open"></i> Productos</a>
+                <a href="clientes.php"><i class="fa-solid fa-users"></i> Clientes</a>
+                <a href="compras.php"><i class="fa-solid fa-receipt"></i> Compras</a>
+                <a href="../cerrarSesionAdmin.php"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
             </nav>
         </header>
 
@@ -239,6 +241,7 @@ try {
                     </td>
                     <td>
                         <a href="productos.php?editar=<?php echo $p["id_producto"]; ?>"><button>Editar</button></a>
+                        <br>
                         <a href="productos.php?eliminar=<?php echo $p["id_producto"]; ?>"
                            onclick="return confirm('¿Eliminar este producto?');"><button>Eliminar</button></a>
                     </td>

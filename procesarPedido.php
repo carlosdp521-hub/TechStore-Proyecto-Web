@@ -121,7 +121,7 @@ try {
             <br>
             <h2 style="color:green;">✔ Compra realizada correctamente.</h2>
             <a href="index.php"><button>Volver al Inicio</button></a>
-            <a href="index.php"><button>Volver al Inicio</button></a>
+            <br><br>
             <a href="productos.php"><button>Seguir Comprando</button></a>
         </section>
     </body>
