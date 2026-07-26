@@ -186,11 +186,11 @@ function mensajeError(string $mensaje)
    VERIFICAR ACCESO DE ADMINISTRADOR
 =========================== */
 
-function verificarAdmin()
+function verificarAdmin($prefijo = "")
 {
     if (!isset($_SESSION["admin_id"])) {
 
-        header("Location: loginAdmin.php");
+        header("Location: " . $prefijo . "loginAdmin.php");
         exit();
 
     }
