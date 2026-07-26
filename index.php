@@ -45,7 +45,7 @@ try {
 } catch (PDOException $e) {
     echo "Error al obtener los productos.";
 }
- 
+
 ?>
 
 <!DOCTYPE html>
